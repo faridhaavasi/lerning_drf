@@ -2,26 +2,29 @@ from django.shortcuts import render
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework.views import APIView
-@api_view(['GET','POST'])
-def hello_world(request):
-    p = [
-        {'name':' laptop', 'price': 22},
-        {'name': 'mobile', 'price': 11}
-    ]
-    return Response(data=p)
+from .serializers import listpost_serializer
+from .models import Post
 
-class Cbv(APIView):
+
+class PostlistviewApi(APIView):
     def get(self, request):
-        p = [
-            {'name': 'amprela', 'peice': 11},
-            {'name': 'camera', 'price': 222}
-        ]
-        return Response(data=p)
+        queryset = Post.objects.all()
+        serializer = listpost_serializer(instance=queryset, many=True)
+        return Response(serializer.data)
 
+
+class detailpostviewApi(APIView):
+    def get(self, request, pk):
+        queryset = Post.objects.get(pk=pk)
+        serializer = listpost_serializer(instance=queryset)
+        return Response(serializer.data)
+
+class addpostApi(APIView):
     def post(self, request):
-        p = [
-            {'name': 'amprela', 'peice': 11},
-            {'name': 'camera', 'price': 222}
-        ]
-        return Response(data=p)
+        serializer = listpost_serializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response({'massage': 'down'})
+        return Response(serializer.errors)
+
 
