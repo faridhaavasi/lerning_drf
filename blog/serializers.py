@@ -9,3 +9,9 @@ class postserializer(serializers.Serializer):
     def create(self, validated_data):
         return Post.objects.create(**validated_data)
 
+class PostserializerModel(serializers.ModelSerializer):
+    class Meta:
+        model = Post
+       # fields = '__all__'
+        exclude = ('status',)
+        read_only_fields = ['id']
